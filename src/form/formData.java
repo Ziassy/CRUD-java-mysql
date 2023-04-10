@@ -221,6 +221,7 @@ public class formData extends javax.swing.JFrame {
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
         // TODO add your handling code here:
+        Clear();
     }//GEN-LAST:event_btnResetActionPerformed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
@@ -248,16 +249,32 @@ public class formData extends javax.swing.JFrame {
                             "','" + txtAlamat.getText() + "')";
                     st.executeUpdate(sql);
                     JOptionPane.showMessageDialog(null, "Data berhasil di simpan");
-                    ShowData();
                     Clear();
+                    ShowData();
+
                 }
             } else {
                 // untuk update data
-
+                try {
+                    String updateData = "UPDATE patient_tp2.pasien SET nama_pasien = '" + txtName.getText() + 
+                        "', nik = '" + txtNIK.getText() +
+                        "', tgl_lahir = '" + txtTanggalLahir.getText() +
+                        "', alamat = '" + txtAlamat.getText() +
+                        "' WHERE nik = '" + txtNIK.getText() + "'";
+                    st.executeUpdate(updateData);
+                    JOptionPane.showMessageDialog(null, "Data berhasil diubah");
+                    Clear();
+                    ShowData();
+                } catch (SQLException e) {
+                    JOptionPane.showMessageDialog(null, "Terjadi kesalahan dalam update data :  " + e.getMessage()); 
+                    
+                }
+                
+ 
             }
              
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Terjadi kesalahan dalam koneksi ke database: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Terjadi kesalahan dalam save data : " + e.getMessage());
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Terjadi kesalahan dalam konversi angka: " + e.getMessage());
         }
