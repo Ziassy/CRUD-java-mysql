@@ -9,6 +9,7 @@ package form;
  * @author 5470
  */
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 public class formData extends javax.swing.JFrame {
@@ -53,12 +54,17 @@ public class formData extends javax.swing.JFrame {
             model.fireTableDataChanged();
             model.setRowCount(0);
             
+            SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd"); // Assumes the input date format is "yyyy-MM-dd"
+            SimpleDateFormat outputDateFormat = new SimpleDateFormat("yyyy-MMM-dd");
+            
             while (rs.next()) {
+            Date tglLahir = rs.getDate("tgl_lahir"); // Retrieve the date from the result set
+            String tglLahirStr = outputDateFormat.format(tglLahir); // Convert date to string in the desired format
             Object[] dataPasien = {
                 rs.getString("no"),
                 rs.getString("nama_pasien"),
                 rs.getString("nik"),
-                rs.getString("tgl_lahir"),
+                tglLahirStr, // Use the converted date string,
                 rs.getString("alamat")
             };
             model.addRow(dataPasien);
@@ -270,7 +276,6 @@ public class formData extends javax.swing.JFrame {
                     
                 }
                 
- 
             }
              
         } catch (SQLException e) {
