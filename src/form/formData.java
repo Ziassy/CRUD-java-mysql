@@ -9,6 +9,7 @@ package form;
  * @author 5470
  */
 import java.sql.*;
+import javax.swing.JOptionPane;
 public class formData extends javax.swing.JFrame {
 
     /**
@@ -17,8 +18,21 @@ public class formData extends javax.swing.JFrame {
     public Statement st;
     public ResultSet rs;
     Connection cn = koneksi.KoneksiDatabase.BukaKoneksi();
+    
     public formData() {
         initComponents();
+    }
+    
+    //untuk clear field
+    private void Clear(){
+        txtNIK.setText("");
+        txtName.setText("");
+        txtTanggalLahir.setText("");
+        txtAlamat.setText("");
+        
+        
+        
+        
     }
 
     /**
@@ -30,12 +44,10 @@ public class formData extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        txtNo = new javax.swing.JTextField();
         txtName = new javax.swing.JTextField();
         txtNIK = new javax.swing.JTextField();
         txtTanggalLahir = new javax.swing.JTextField();
@@ -47,8 +59,6 @@ public class formData extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setText("No");
-
         jLabel2.setText("NIK");
 
         jLabel3.setText("Tangal Lahir");
@@ -57,12 +67,6 @@ public class formData extends javax.swing.JFrame {
 
         jLabel5.setText("Nama Pasien");
 
-        txtNo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtNoActionPerformed(evt);
-            }
-        });
-
         txtAlamat.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtAlamatActionPerformed(evt);
@@ -70,6 +74,11 @@ public class formData extends javax.swing.JFrame {
         });
 
         btnSave.setText("Simpan");
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
+            }
+        });
 
         btnReset.setText("Reset");
         btnReset.addActionListener(new java.awt.event.ActionListener() {
@@ -103,7 +112,6 @@ public class formData extends javax.swing.JFrame {
                         .addContainerGap(27, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
                             .addComponent(jLabel5)
                             .addComponent(jLabel2)
                             .addComponent(jLabel3)
@@ -115,7 +123,6 @@ public class formData extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(btnReset)
                                 .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(txtNo)
                             .addComponent(txtName)
                             .addComponent(txtNIK)
                             .addComponent(txtAlamat)
@@ -125,15 +132,11 @@ public class formData extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(22, 22, 22)
+                .addGap(56, 56, 56)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel1)
-                                    .addComponent(txtNo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel5)
                                     .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -159,10 +162,6 @@ public class formData extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtNoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtNoActionPerformed
-
     private void txtAlamatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtAlamatActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtAlamatActionPerformed
@@ -170,6 +169,45 @@ public class formData extends javax.swing.JFrame {
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnResetActionPerformed
+
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        // TODO add your handling code here:
+        
+        try {
+            st = cn.createStatement();
+            if(txtNIK.getText().isEmpty() || txtName.getText().isEmpty() || txtTanggalLahir.getText().isEmpty() || txtAlamat.getText().isEmpty()){
+                JOptionPane.showMessageDialog(null, "Data tidak boleh kosong",  "Validasi data", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            
+            // Untuk simpan data
+            if (btnSave.getText() == "Simpan") {
+
+                String cek = "SELECT * FROM patient_tp2.pasien WHERE nik = '" + txtNIK.getText() + "'";
+                rs = st.executeQuery(cek);
+
+                if(rs.next()) {
+                    JOptionPane.showMessageDialog(null, "Nik sudah terdaftar");
+                } else {
+                    String sql = "INSERT INTO patient_tp2.pasien (nama_pasien, nik, tgl_lahir, alamat) VALUES ('" + txtName.getText() + 
+                            "','" + txtNIK.getText() + 
+                            "','" + txtTanggalLahir.getText() +
+                            "','" + txtAlamat.getText() + "')";
+                    st.executeUpdate(sql);
+                    JOptionPane.showMessageDialog(null, "Data berhasil di simpan");
+                    Clear();
+                }
+            } else {
+              JOptionPane.showMessageDialog(null, "apa ini");
+
+            }
+             
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Terjadi kesalahan dalam koneksi ke database: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Terjadi kesalahan dalam konversi angka: " + e.getMessage());
+        }
+    }//GEN-LAST:event_btnSaveActionPerformed
 
     /**
      * @param args the command line arguments
@@ -209,7 +247,6 @@ public class formData extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnReset;
     private javax.swing.JButton btnSave;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -219,7 +256,6 @@ public class formData extends javax.swing.JFrame {
     private javax.swing.JTextField txtAlamat;
     private javax.swing.JTextField txtNIK;
     private javax.swing.JTextField txtName;
-    private javax.swing.JTextField txtNo;
     private javax.swing.JTextField txtTanggalLahir;
     // End of variables declaration//GEN-END:variables
 }
