@@ -10,6 +10,7 @@ package form;
  */
 import java.sql.*;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 public class formData extends javax.swing.JFrame {
 
     /**
@@ -21,6 +22,7 @@ public class formData extends javax.swing.JFrame {
     
     public formData() {
         initComponents();
+        ShowData();
     }
     
     //untuk clear field
@@ -29,10 +31,42 @@ public class formData extends javax.swing.JFrame {
         txtName.setText("");
         txtTanggalLahir.setText("");
         txtAlamat.setText("");
-        
-        
-        
-        
+
+    }
+    
+    private void ShowData() {
+        try {
+            st = cn.createStatement();
+            rs = st.executeQuery("SELECT * FROM patient_tp2.pasien");
+            
+            DefaultTableModel model = new DefaultTableModel();
+            model.addColumn("No");
+            model.addColumn("Nama Pasien");
+            model.addColumn("NIK");
+            model.addColumn("Tanggal Lahir");
+            model.addColumn("Alamat");
+            
+            model.getDataVector().removeAllElements();
+            model.fireTableDataChanged();
+            model.setRowCount(0);
+            
+            while (rs.next()) {
+            Object[] dataPasien = {
+                rs.getString("no"),
+                rs.getString("nama_pasien"),
+                rs.getString("nik"),
+                rs.getString("tgl_lahir"),
+                rs.getString("alamat")
+            };
+            model.addRow(dataPasien);
+            jTable1.setModel(model); // Set table model outside of the loop
+        }
+
+            
+        }catch(SQLException e) {
+            JOptionPane.showMessageDialog(null, "Terjadi kesalahan dalam get data: " + e.getMessage());
+
+         }
     }
 
     /**
@@ -181,7 +215,7 @@ public class formData extends javax.swing.JFrame {
             }
             
             // Untuk simpan data
-            if (btnSave.getText() == "Simpan") {
+            if (btnSave.getText().equals("Simpan")) {
 
                 String cek = "SELECT * FROM patient_tp2.pasien WHERE nik = '" + txtNIK.getText() + "'";
                 rs = st.executeQuery(cek);
