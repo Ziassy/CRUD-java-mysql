@@ -31,6 +31,9 @@ public class formData extends javax.swing.JFrame {
         txtName.setText("");
         txtTanggalLahir.setText("");
         txtAlamat.setText("");
+        
+        btnSave.setText("Simpan");
+        txtNIK.setEditable(true);
 
     }
     
@@ -59,7 +62,7 @@ public class formData extends javax.swing.JFrame {
                 rs.getString("alamat")
             };
             model.addRow(dataPasien);
-            jTable1.setModel(model); // Set table model outside of the loop
+            TableData.setModel(model); // Set table model outside of the loop
         }
 
             
@@ -89,7 +92,8 @@ public class formData extends javax.swing.JFrame {
         btnSave = new javax.swing.JButton();
         btnReset = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        TableData = new javax.swing.JTable();
+        btnDeleteData = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -121,7 +125,7 @@ public class formData extends javax.swing.JFrame {
             }
         });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        TableData.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -132,7 +136,19 @@ public class formData extends javax.swing.JFrame {
                 "No", "Nama Pasien", "NIK", "Tanggal Lahir", "Alamat"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        TableData.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TableDataMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(TableData);
+
+        btnDeleteData.setText("Hapus");
+        btnDeleteData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteDataActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -154,6 +170,8 @@ public class formData extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(btnSave)
+                                .addGap(26, 26, 26)
+                                .addComponent(btnDeleteData)
                                 .addGap(18, 18, 18)
                                 .addComponent(btnReset)
                                 .addGap(0, 0, Short.MAX_VALUE))
@@ -187,7 +205,8 @@ public class formData extends javax.swing.JFrame {
                 .addGap(35, 35, 35)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSave)
-                    .addComponent(btnReset))
+                    .addComponent(btnReset)
+                    .addComponent(btnDeleteData))
                 .addGap(37, 37, 37)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(36, Short.MAX_VALUE))
@@ -229,10 +248,11 @@ public class formData extends javax.swing.JFrame {
                             "','" + txtAlamat.getText() + "')";
                     st.executeUpdate(sql);
                     JOptionPane.showMessageDialog(null, "Data berhasil di simpan");
+                    ShowData();
                     Clear();
                 }
             } else {
-              JOptionPane.showMessageDialog(null, "apa ini");
+                // untuk update data
 
             }
              
@@ -242,6 +262,41 @@ public class formData extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Terjadi kesalahan dalam konversi angka: " + e.getMessage());
         }
     }//GEN-LAST:event_btnSaveActionPerformed
+
+    private void TableDataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableDataMouseClicked
+        // TODO add your handling code here:
+        txtName.setText(TableData.getValueAt(TableData.getSelectedRow(), 1).toString());
+        txtNIK.setText(TableData.getValueAt(TableData.getSelectedRow(), 2).toString());
+        txtTanggalLahir.setText(TableData.getValueAt(TableData.getSelectedRow(), 3).toString());
+        txtAlamat.setText(TableData.getValueAt(TableData.getSelectedRow(), 4).toString());
+        
+        // buat nik disable
+        txtNIK.setEditable(false);
+        btnSave.setText("Ubah Data");   
+        
+    }//GEN-LAST:event_TableDataMouseClicked
+
+    private void btnDeleteDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteDataActionPerformed
+        // TODO add your handling code here:
+        if (txtNIK.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Silahkan pilih data yang akan di hapus !");
+        } else {
+            int answer = JOptionPane.showConfirmDialog(null, "Apakah ingin menhapus data ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+            if(answer == 0) {
+                try {
+                    st = cn.createStatement();
+                    String sql = "DELETE FROM patient_tp2.pasien WHERE nik = '" + txtNIK.getText()+ "'";
+                    st.executeUpdate(sql);
+                    JOptionPane.showMessageDialog(null, "Data berhasil dihapus");
+                    ShowData();
+                    Clear();
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, e);
+
+                }
+            }
+        }
+    }//GEN-LAST:event_btnDeleteDataActionPerformed
 
     /**
      * @param args the command line arguments
@@ -279,6 +334,8 @@ public class formData extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable TableData;
+    private javax.swing.JButton btnDeleteData;
     private javax.swing.JButton btnReset;
     private javax.swing.JButton btnSave;
     private javax.swing.JLabel jLabel2;
@@ -286,7 +343,6 @@ public class formData extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTextField txtAlamat;
     private javax.swing.JTextField txtNIK;
     private javax.swing.JTextField txtName;
