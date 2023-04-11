@@ -9,6 +9,7 @@ package form;
  * @author 5470
  */
 import java.sql.*;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -54,7 +55,6 @@ public class formData extends javax.swing.JFrame {
             model.fireTableDataChanged();
             model.setRowCount(0);
             
-            SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd"); // Assumes the input date format is "yyyy-MM-dd"
             SimpleDateFormat outputDateFormat = new SimpleDateFormat("yyyy-MMM-dd");
             
             while (rs.next()) {
@@ -289,7 +289,20 @@ public class formData extends javax.swing.JFrame {
         // TODO add your handling code here:
         txtName.setText(TableData.getValueAt(TableData.getSelectedRow(), 1).toString());
         txtNIK.setText(TableData.getValueAt(TableData.getSelectedRow(), 2).toString());
-        txtTanggalLahir.setText(TableData.getValueAt(TableData.getSelectedRow(), 3).toString());
+//        txtTanggalLahir.setText(TableData.getValueAt(TableData.getSelectedRow(), 3).toString());
+            String txtTanggalLahirValue = TableData.getValueAt(TableData.getSelectedRow(), 3).toString();
+        // Convert txtTanggalLahir to yyyy-MM-dd format
+        DateFormat inputFormat = new SimpleDateFormat("yyyy-MMM-dd"); // Update the pattern to match txtTanggalLahir format
+        DateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Date date = new Date(inputFormat.parse(txtTanggalLahirValue).getTime()); // Convert to java.sql.Dat
+            String formattedDate = outputFormat.format(date);
+            txtTanggalLahir.setText(formattedDate);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+
+        } 
+
         txtAlamat.setText(TableData.getValueAt(TableData.getSelectedRow(), 4).toString());
         
         // buat nik disable
